@@ -50,7 +50,8 @@ call plug#begin(stdpath('data') . '/plugged')
     Plug 'Shougo/ddc-matcher_length'
     Plug 'Shougo/ddc-sorter_rank'
     Plug 'Shougo/ddc-converter_remove_overlap'
-    Plug 'matsui54/ddc-nvim-lsp-doc'
+    " Plug 'matsui54/ddc-nvim-lsp-doc'
+    Plug 'matsui54/denops-popup-preview.vim'
 call plug#end()
 
 " Bindings
@@ -108,6 +109,19 @@ endfunction
 au FileType cpp,python,rust call Hl_too_long()
 set undodir=$HOME/.local/share/nvim/undo
 set undofile
+
+function Jupyter()
+    let g:magma_cell_highlight_group="TermCursor"
+    nnoremap <silent>       <LocalLeader>rr :MagmaEvaluateLine<CR>
+    vnoremap <silent>       <LocalLeader>r  :<BS><BS><BS><BS><BS>MagmaEvaluateVisual<CR>
+    nnoremap <silent>       <LocalLeader>rc :MagmaReevaluateCell<CR>
+    nnoremap <silent>       <LocalLeader>rd :MagmaDelete<CR>
+    nnoremap <silent>       <LocalLeader>ro :MagmaShowOutput<CR>
+
+    MagmaLoad
+    autocmd BufWritePost *.py :MagmaSave
+endfunction
+au FileType python call Jupyter()
 
 " DDC Config
 call ddc#custom#patch_global('sources', ['nvim-lsp', 'around', 'file'])
@@ -170,8 +184,13 @@ inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
     "km('i', '<s-tab>', '<C-R>=v:lua.s_tab_complete()<CR>' ,{silent = true, noremap = true})
     "km('i', '<enter>', 'v:lua.enter_key()' ,{expr = true, noremap = false})
     "fn['ddc#enable']()
+" let g:ddc_nvim_lsp_doc_config = {
+"     \ 'documentation': {
+"     \     'enable': v:false,
+"     \ } }
 call ddc#enable()
-call ddc_nvim_lsp_doc#enable()
+call popup_preview#enable()
+" call ddc_nvim_lsp_doc#enable()
 
 " Dark magic
 lua << EOF
